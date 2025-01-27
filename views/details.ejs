@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Albums Home</title>
+    <link rel="stylesheet" href="/styles/main.css">
+
+</head>
+<body class="container">
+<a href="/">Home</a>
+<div class="albumContainer">
+<% if (album) { %>
+    <h3>Artist: <%= album.artist %> </h3>
+
+    <h4>Album Name: <%= album.albumTitle %></h4>
+    <h5>Songs</h5>
+        <hr>
+    <% album.songs.forEach( function(song) { %>
+        <li><%= song %></li>
+    <% }); %>
+<% } else { %>
+    <p><em>No artist found.</em></p>
+<% } %>
+</div>
+</body>
+</html>

@@ -12,7 +12,9 @@
     "url": "git+https://github.com/Peacegypsy/IT122Repo.git#Main"
   },
   "keywords": [
-    "node", "npm", "javascript"
+    "node",
+    "npm",
+    "javascript"
   ],
   "author": "Christina Sherman",
   "license": "ISC",
@@ -20,5 +22,9 @@
     "url": "https://github.com/Peacegypsy/IT122Repo/issues"
   },
   "homepage": "https://github.com/Peacegypsy/IT122Repo/tree/Main#readme",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  }
 }
