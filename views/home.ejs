@@ -1,20 +1,23 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Home</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/styles/main.css">
+    <title>Albums Home</title>
+    <%- include('./partials/head'); %>
 </head>
 <body  class="container">
+<header>
+    <%- include('./partials/header'); %>
+</header>
 <h2>Home</h2>
 <hr>
 <h3>Music Collection</h3>
 <h4>Artists</h4>
-<div class="albumContainer">
+<div class="albumContainer" style="background-color: powderblue">
 <% albums.forEach(function(album) { %>
-    <li><a href="/detail?artist=<%= album.artist %>"> <%= album.artist %></a></li>
+    <li style="list-style: none"><a style="color: darkblue" href="/detail?artist=<%= album.artist %>"> <%= album.artist %></a></li>
 <% }); %>
 </div>
+<footer>
+    <%- include('./partials/footer'); %>
+</footer>
 </body>
 </html>

@@ -1,13 +1,13 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Albums Home</title>
-    <link rel="stylesheet" href="/styles/main.css">
-
+    <title>Album Details</title>
+    <%- include('./partials/head'); %>
 </head>
 <body class="container">
-<a href="/">Home</a>
-<div class="albumContainer">
+<header>
+    <%- include('./partials/header'); %>
+</header>
+<div class="albumContainer" style="background-color: powderblue">
 <% if (album) { %>
     <h3>Artist: <%= album.artist %> </h3>
 
@@ -15,11 +15,16 @@
     <h5>Songs</h5>
         <hr>
     <% album.songs.forEach( function(song) { %>
-        <li><%= song %></li>
+        <li style="list-style: none"><%= song %></li>
     <% }); %>
 <% } else { %>
     <p><em>No artist found.</em></p>
 <% } %>
-</div>
+<hr>
+    <div>Delete Album:   </div>
+<a href="/delete?albumTitle=<%= album.albumTitle %>" class="delete"><%= album.albumTitle %></a></div>
+<footer>
+    <%- include('./partials/footer'); %>
+</footer>
 </body>
 </html>

@@ -1,0 +1,15 @@
+.albumContainer {
+    background-color: powderblue;
+    color: darkblue;
+
+}
+
+li {
+    list-style: none;
+    color: black;
+}
+a:link {
+    text-decoration: none;
+    color: black;
+}
+
