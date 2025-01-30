@@ -61,6 +61,7 @@ app.get('/delete', async (req, res) => {
     }
 });
 
+
 // API routes
 // get home page(show all albums)
 app.get('/albums', (req, res) => {
@@ -82,12 +83,25 @@ app.get('/albums/:artist', (req, res) => {
     });
 
 // Update album info
-app.post('/albums/update/:artist', (req, res, artist) => {
+app.post('/albums/update/:artist', (req, res) => {
     Album.findOneAndUpdate({artist: req.body.artist},req.body, {upsert: true})
         .then(result => res.json(result))
         .catch(err => res.json({"error NOT HERE": err}));
 });
 
+// delete an album
+app.get('/albums/delete/:albumTitle', (req, res) => {
+    Album.findOneAndDelete({albumTitle: req.body.albumTitle}, req.body)
+        .then(result => {
+            if (result.deletedCount === 1) {
+                console.log("Successfully deleted");
+            } else {
+                console.log("Not deleted");
+            }
+        res.json(result);
+        })
+    .catch(err => res.json({"error NOT HERE": err}));
+})
 
 
 app.use((req, res) => {
