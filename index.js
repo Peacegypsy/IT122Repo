@@ -1,18 +1,19 @@
 'use strict'
 
 import {Album} from './models/album.js';
-import express from "express";
+import express, {json} from "express";
 import cors from 'cors';
- 
+
 const app = express();
 
 app.set("port", process.env.PORT || 3000);
 app.use(express.static( "/public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
+app.use('/api', cors());
 app.set("view engine", "ejs");
 
+// Gets home page
 app.get("/", (req, res) => {
     Album.find({}).lean()
         .then((albums) => {
@@ -22,6 +23,8 @@ app.get("/", (req, res) => {
             console.error(err);
         })
 });
+
+// Home page - displays all artists names linked to an album in collection
 app.get('/home', (req, res) => {
     Album.find({}).lean()
         .then((albums) => {
@@ -32,10 +35,12 @@ app.get('/home', (req, res) => {
         })
 });
 
+// About page
 app.get('/about', (req, res) => {
     res.render('about');
 })
 
+// Album details
 app.get("/detail", (req, res) => {
     Album.findOne({ artist:req.query.artist}).lean()
         .then((album) => {
@@ -43,6 +48,8 @@ app.get("/detail", (req, res) => {
         })
         .catch((err) => {next(err)})
 });
+
+// Deletes a single album
 app.get('/delete', async (req, res) => {
     const deletedAlbum = await Album.findOneAndDelete({albumTitle:req.query.albumTitle}).lean();
 
@@ -53,6 +60,34 @@ app.get('/delete', async (req, res) => {
         res.render('delete');
     }
 });
+
+// API routes
+// get home page(show all albums)
+app.get('/albums', (req, res) => {
+    Album.find({}).lean()
+        .then((albums) => {
+            res.json(albums);
+        })
+        .catch(err => res.json(err));
+});
+
+// details page
+app.get('/albums/:artist', (req, res) => {
+    let artist = req.body.artist;
+    Album.findOne({artist: artist})
+        .then((album) => {
+            res.json(album);
+        })
+        .catch(err => res.json(err));
+    });
+
+// Update album info
+app.post('/albums/update/:artist', (req, res, artist) => {
+    Album.findOneAndUpdate({artist: req.body.artist},req.body, {upsert: true})
+        .then(result => res.json(result))
+        .catch(err => res.json({"error NOT HERE": err}));
+});
+
 
 
 app.use((req, res) => {
