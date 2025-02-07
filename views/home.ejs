@@ -12,9 +12,9 @@
 <h3>Music Collection</h3>
 <h4>Artists</h4>
 <div class="albumContainer" style="background-color: powderblue">
-<% albums.forEach(function(album) { %>
-    <li style="list-style: none"><a style="color: darkblue" href="/detail?artist=<%= album.artist %>"> <%= album.artist %></a></li>
-<% }); %>
+    <% albums.forEach(function(album) { %>
+        <li style="list-style: none"><a style="color: darkblue" href="/detail?artist=<%= album.artist %>"> <%= album.artist %></a></li>
+    <% }); %>
 </div>
 <footer>
     <%- include('./partials/footer'); %>

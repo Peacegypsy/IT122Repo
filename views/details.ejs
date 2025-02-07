@@ -22,7 +22,7 @@
 <% } %>
 <hr>
     <div>Delete Album:   </div>
-<a href="/delete?albumTitle=<%= album.albumTitle %>" class="delete"><%= album.albumTitle %></a></div>
+<a class="delete" href="/delete?albumTitle=<% album.albumTitle %>"><%= album.albumTitle %></a></div>
 <footer>
     <%- include('./partials/footer'); %>
 </footer>

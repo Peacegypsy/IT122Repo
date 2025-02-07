@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
     <title>Albums Home</title>
-
+    <%- include('./partials/head'); %>
 
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
@@ -18,14 +18,19 @@
 
     const albums = <%- albums %>;
 
+    const albumDetails = (event) => {
+        window.location.href = `/detail?albumTitle=` + event.target.innerText;
+    }
+
+
     const Albums = (props) => {
         const listAlbums = props.data.map((album) =>
-            <li> {album.artist}</li>);
+            <li key="album.artist" id="album._id" onClick={props.clickHandler}> <a style={{color: "darkblue"}} href={"/detail?artist="+album.artist}> {album.artist} </a></li>);
         return <ul>{listAlbums}</ul>
     }
 
     ReactDOM.render(
-        <div><Albums data={albums} /></div>, document.getElementById('root'));
+        <div><Albums data={albums} clickHandler={{albumDetails}} /></div>, document.getElementById('root'));
 </script>
 
 

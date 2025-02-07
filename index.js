@@ -47,14 +47,14 @@ app.get('/about', (req, res) => {
 app.get("/detail", (req, res) => {
     Album.findOne({ artist:req.query.artist}).lean()
         .then((album) => {
-            res.render('details', {album: album});
+            res.render('details', {album: album, albumTitle: req.query.album});
         })
         .catch((err) => {next(err)})
 });
 
 // Deletes a single album
 app.get('/delete', async (req, res) => {
-    const deletedAlbum = await Album.findOneAndDelete({albumTitle:req.query.albumTitle}).lean();
+    const deletedAlbum = await Album.findOneAndDelete({albumTitle:req.query.album}).lean();
 
     if (deletedAlbum) {
         console.log("Album deleted");
@@ -70,7 +70,7 @@ app.get('/delete', async (req, res) => {
 app.get('/albums', (req, res) => {
     Album.find({}).lean()
         .then((albums) => {
-            res.render('albums_react',{albums: JSON.stringify(albums)});
+            res.render('home',{albums: albums});
         })
         .catch(err => res.json(err));
 });
