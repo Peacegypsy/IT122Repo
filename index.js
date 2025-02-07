@@ -4,6 +4,7 @@ import {Album} from './models/album.js';
 import express, {json} from "express";
 import cors from 'cors';
 
+
 const app = express();
 
 app.set("port", process.env.PORT || 3000);
@@ -13,11 +14,13 @@ app.use(express.json());
 app.use('/api', cors());
 app.set("view engine", "ejs");
 
+
+
 // Gets home page
 app.get("/", (req, res) => {
     Album.find({}).lean()
         .then((albums) => {
-            res.render('home', {albums: albums});
+            res.render('albums_react', {albums: JSON.stringify(albums)});
         })
         .catch((err) => {
             console.error(err);
@@ -67,7 +70,7 @@ app.get('/delete', async (req, res) => {
 app.get('/albums', (req, res) => {
     Album.find({}).lean()
         .then((albums) => {
-            res.json(albums);
+            res.render('albums_react',{albums: JSON.stringify(albums)});
         })
         .catch(err => res.json(err));
 });
