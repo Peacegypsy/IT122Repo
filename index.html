@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://kit.fontawesome.com/b3ee3da0d8.js" crossorigin="anonymous"></script>
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         header {
             width: 100%;
@@ -26,15 +31,93 @@
             padding: 5px;
             font-size: xx-small;
         }
+        .star{
+            color: gold;
+        }
+
     </style>
 </head>
-<header>Greetings and Salutations!</header>
+<header></header>
 <body>
+<div id="root"></div>
+<script type="text/babel">
+    let icon = "⭐︎";
+    const Artists = (props) => {
+        const artistList = props.artists.map((artist) => <li onClick={props.onClick} key={artist['name']}> {artist['name']} </li>);
+        return <ul>{artistList}</ul>
+    }
 
-<h2>Welcome to the Index page!</h2>
-    <hr>
-    <br>
-    <img id="cat-img" src="https://preview.redd.it/pallas-cat-beans-v0-wtb00u6wo4s81.jpg?width=1080&crop=smart&auto=webp&s=47d7306b1e4506ecb3d4dccb40fd8b032a8e91f5" width="500" height="500" alt="picture of a pallus cat">
-    <p>This is a Pallus Cat showing off his amazing toe beans.</p>
+    const ArtistDetail = (props) => {
+        return (
+            <div>
+                <h3>Artist Details:</h3>
+                <form>
+                    <label>Name: <input type="text" name="name" value={props.artist.name || ""}
+                                        onChange={props.onChange}/> </label><br/>
+                    <label>Album Name: <input type="text" name="albumName" value={props.artist.albumName || ""}
+                                              onChange={props.onChange}/></label><br/>
+                    <button onClick={props.onClick}>Reset</button>
+                </form>
+            </div>
+        )
+    }
+
+
+    const App = (props) => {
+        const [artists, setArtists] = React.useState(
+            [
+                {"name": "Taylor Swift", "albumName": "Midnights", "icon": "⭐︎"},
+                {"name": "Pink Floyd", "albumName": "Dark side of the moon" },
+                {"name": "Alice in chains", "albumName": "Dirt"},
+                {"name": "Miles Davis", "albumName": "Porgy and Bess"},
+                {"name": "Jack Williams", "albumName": "Sky"},
+                {"name": "Blurby Blurb", "albumName": "jdsfheh"}
+            ]);
+        const [currentArtist, setCurrentArtist] = React.useState({});
+
+        const selectArtist = (e) => {
+            const found = artists.find((artist) => {
+                return artist.name === e.target.innerText;
+            });
+            setCurrentArtist(found);
+        }
+
+        const albumNameChange = (e) => {
+            let newChange = { ...currentArtist } ;
+            newChange[e.target.name] = e.target.value;
+
+            setCurrentArtist(newChange);
+
+            artists.find((artist, index) => {
+                if (artist.name === newChange.name) {
+                    artists[index] = newChange;
+                    setArtists(artists);
+                }
+            })
+        }
+
+        const handleReset = () => {
+            Array.from(document.querySelectorAll("input")).forEach(
+                input => (input.value = "")
+            );
+            this.setState({
+                values: [{}]
+            });
+        };
+
+        return (
+            <div>
+                <h3>Albums</h3>
+                <Artists artists={artists} onClick={selectArtist}/>
+                <ArtistDetail artist={currentArtist} onChange={albumNameChange} />
+            </div>
+        );
+
+    }
+    const container = document.getElementById("root");
+    const root = ReactDOM.createRoot(container);
+    root.render(<App name='Artists'/>);
+</script>
+
 </body>
 </html>
