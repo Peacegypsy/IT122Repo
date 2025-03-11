@@ -64,16 +64,18 @@
 
 
     const App = (props) => {
-        const [artists, setArtists] = React.useState(
-            [
-                {"name": "Taylor Swift", "albumName": "Midnights", "icon": "⭐︎"},
-                {"name": "Pink Floyd", "albumName": "Dark side of the moon" },
-                {"name": "Alice in chains", "albumName": "Dirt"},
-                {"name": "Miles Davis", "albumName": "Porgy and Bess"},
-                {"name": "Jack Williams", "albumName": "Sky"},
-                {"name": "Blurby Blurb", "albumName": "jdsfheh"}
-            ]);
+        const [artists, setArtists] = React.useState([]);
         const [currentArtist, setCurrentArtist] = React.useState({});
+
+        React.useEffect(() => {
+            const fetchArtists = async () => {
+                fetch("http://localhost:3000/albums").then(response => response.json())
+                    .then((json) => {
+                        setArtists(json);
+                    })
+            }
+            fetchArtists()
+        }, []);
 
         const selectArtist = (e) => {
             const found = artists.find((artist) => {

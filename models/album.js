@@ -21,9 +21,9 @@ mongoose.connection.on('open', () => {
 });
 
 const albumSchema = new Schema({
-    artist: {type: String},
-    albumTitle: {type: String, required: true},
-    songs: {type: Array, default: undefined},
+    artist: {type: String, required: true},
+    albumTitle: {type: String},
+    songs: {type: Array, default: []},
     releaseDate: {type: Date},
 });
 

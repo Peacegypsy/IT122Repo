@@ -2,41 +2,130 @@
 <head>
     <title>Albums Home</title>
     <%- include('./partials/head'); %>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
     <!-- Don't use this in production: -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body>
+<body class="container">
 <header>
     <%- include('./partials/header'); %>
 </header>
 <div id="root"></div>
 <script type="text/babel">
 
-    const albums = <%- albums %>;
-
-    const albumDetails = (event) => {
-        window.location.href = `/detail?albumTitle=` + event.target.innerText;
-    }
-
-
-    const Albums = (props) => {
-        const listAlbums = props.data.map((album) =>
-            <li key="album.artist" id="album._id" onClick={props.clickHandler}> <a style={{color: "darkblue"}} href={"/detail?artist="+album.artist}> {album.artist} </a></li>);
+    const ArtistList = (props) => {
+        const listAlbums = props.albums.map((album) =>
+            <li key={album._id} id={album._id} onClick={props.clickHandler}> {album.artist} </li>);
         return <ul>{listAlbums}</ul>
     }
 
-    ReactDOM.render(
-        <div><Albums data={albums} clickHandler={{albumDetails}} /></div>, document.getElementById('root'));
-</script>
+    const ArtistDetail = (props) => {
+        console.log("props: ", props);
 
+        return (
+            <div>
+                <h3>Artist Details:</h3>
+                <form>
+                    <h4>hello</h4>
+                    <label>Name: <input type="text" name="artist" value={props.album.artist || ""} onChange={props.handleChange}/> </label><br/>
+                    <label>Album Title: <input type="text" name="albumTitle" value={props.album.albumTitle || ""} onChange={props.handleChange} /></label><br/>
+                    <label>Songs: <input type="array" name="songs" value={props.album.songs || ""} onChange={props.handleChange} /></label><br/>
+                </form>
+                <button onClick={props.saveNewAlbum}>Save</button>&nbsp;
+
+                <button onClick={props.handleReset}>Reset</button>&nbsp;
+            </div>
+        )
+    }
+
+    const App = (props) => {
+        const [albums, setAlbums] = React.useState([]);
+        const [currentAlbum, setCurrentAlbum] = React.useState({});
+
+        React.useEffect(() => {
+            const fetchAlbums = async () => {
+                fetch('api/albums').then(res => res.json())
+                    .then((json) => {
+                        setAlbums(json);
+                    })
+            }
+            fetchAlbums()
+        }, []);
+
+        const selectArtist = (event) => {
+            const found = albums.find((album) => {
+                return album.artist === event.target.innerText;
+            });
+            return setCurrentAlbum(found);
+        }
+
+        const saveNewAlbum = (props) => {
+            if(!currentAlbum.artist) {
+                return;
+            }
+            console.log("crnt album BF: ",currentAlbum);
+            fetch('api/addAlbum', {method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    artist: currentAlbum.artist,
+                    albumTitle: currentAlbum.albumTitle,
+                    songs: currentAlbum.songs,
+                })})
+                .then((res) => res.json())
+                .then((album) => {
+                    console.log("album: ", album);
+                    console.log("crnt album AF: ",currentAlbum);
+                    if(!currentAlbum._id) {
+                        const na = currentAlbum;
+                        na._id = album._id;
+                        setCurrentAlbum(na);
+                        console.log("new alb: ", na);
+                        console.log("c.a. : ", currentAlbum);
+                        let updatedAlbums = [...albums];
+                        updatedAlbums.push(na);
+                        console.log("updated albums: ", updatedAlbums.at(-1));
+                        return setAlbums(updatedAlbums);
+                    }
+                });
+        };
+
+        const handleReset = () => {
+            setCurrentAlbum({});
+        }
+
+        const albumChange = (event) => {
+            let newChange = {...currentAlbum};
+            newChange[event.target.name] = event.target.value;
+            setCurrentAlbum(newChange);
+
+            albums.find((album, index) => {
+                if (album._id === newChange._id) {
+                    albums[index] = newChange;
+                    setAlbums(albums);
+                }
+            })
+        }
+
+        return (
+            <div>
+                <h4>Artist/Album Details</h4>
+                <ArtistList albums={albums} clickHandler={selectArtist} />
+                <ArtistDetail album={currentAlbum} handleChange={albumChange} saveNewAlbum={saveNewAlbum} handleReset={handleReset} />
+            </div>
+        )
+    }
+
+    const container = document.getElementById("root");
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
+</script>
 
 <footer>
     <%- include('./partials/footer'); %>
 </footer>
 </body>
-
 </html>
