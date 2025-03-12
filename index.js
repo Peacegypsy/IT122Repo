@@ -44,6 +44,16 @@ app.get("/detail", (req, res, next) => {
         .catch((err) => {next(err)})
 });
 
+// details page
+app.get('/albums/:artist', (req, res) => {
+    let artist = req.body.artist;
+    Album.findOne({artist: artist})
+        .then((album) => {
+            res.json(album);
+        })
+        .catch(err => res.json(err));
+});
+
 // Deletes a single album
 app.get('/delete', async (req, res) => {
     const deletedAlbum = await Album.findOneAndDelete({albumTitle:req.query.album}).lean();
@@ -65,16 +75,6 @@ app.get('/api/albums', (req, res, next) => {
         })
         .catch(err => next(err));
 });
-
-// details page
-app.get('/albums/:artist', (req, res) => {
-    let artist = req.body.artist;
-    Album.findOne({artist: artist})
-        .then((album) => {
-            res.json(album);
-        })
-        .catch(err => res.json(err));
-    });
 
 // add a new album
 app.post('/api/addAlbum', (req, res, next) => {
@@ -100,8 +100,6 @@ app.get('/api/add/:_id/:artist/:albumTitle/:songs',(req, res, next) => {
         res.json({updated: res.nModified});
     });
 });
-
-
 
 // delete an album
 app.get('/api/albums/delete/:_id', (req, res) => {
