@@ -25,20 +25,18 @@
     }
 
     const ArtistDetail = (props) => {
-        console.log("props: ", props);
-
         return (
             <div>
                 <h3>Artist Details:</h3>
                 <form>
-                    <h4>hello</h4>
+                    <h5 id="note"></h5>
                     <label>Name: <input type="text" name="artist" value={props.album.artist || ""} onChange={props.handleChange}/> </label><br/>
                     <label>Album Title: <input type="text" name="albumTitle" value={props.album.albumTitle || ""} onChange={props.handleChange} /></label><br/>
                     <label>Songs: <input type="array" name="songs" value={props.album.songs || ""} onChange={props.handleChange} /></label><br/>
                 </form>
                 <button onClick={props.saveNewAlbum}>Save</button>&nbsp;
-
                 <button onClick={props.handleReset}>Reset</button>&nbsp;
+                <button onClick={props.deleteAlbum}>Delete</button>
             </div>
         )
     }
@@ -46,6 +44,7 @@
     const App = (props) => {
         const [albums, setAlbums] = React.useState([]);
         const [currentAlbum, setCurrentAlbum] = React.useState({});
+        const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
 
         React.useEffect(() => {
             const fetchAlbums = async () => {
@@ -64,38 +63,46 @@
             return setCurrentAlbum(found);
         }
 
+        const handleReset = () => {
+            setCurrentAlbum({});
+        }
+
         const saveNewAlbum = (props) => {
             if(!currentAlbum.artist) {
                 return;
             }
-            console.log("crnt album BF: ",currentAlbum);
             fetch('api/addAlbum', {method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    artist: currentAlbum.artist,
-                    albumTitle: currentAlbum.albumTitle,
-                    songs: currentAlbum.songs,
-                })})
+                body: JSON.stringify(currentAlbum)
+                })
                 .then((res) => res.json())
                 .then((album) => {
-                    console.log("album: ", album);
-                    console.log("crnt album AF: ",currentAlbum);
                     if(!currentAlbum._id) {
                         const na = currentAlbum;
                         na._id = album._id;
                         setCurrentAlbum(na);
-                        console.log("new alb: ", na);
-                        console.log("c.a. : ", currentAlbum);
                         let updatedAlbums = [...albums];
                         updatedAlbums.push(na);
-                        console.log("updated albums: ", updatedAlbums.at(-1));
                         return setAlbums(updatedAlbums);
                     }
                 });
         };
 
-        const handleReset = () => {
-            setCurrentAlbum({});
-        }
+        const deleteAlbum = (props) => {
+            let id = currentAlbum._id;
+            fetch(`/api/albums/delete/${id}`)
+                .then((res) => res.json())
+                .then((album) => {
+                    const newAlbums = albums.filter((album) => {
+                        return album._id !== id;
+                    });
+                    setAlbums(newAlbums);
+                    setCurrentAlbum({});
+                    setShowSuccessMessage(true);
+                    setTimeout(() => {
+                        setShowSuccessMessage(false);
+                    }, 3000);
+                })
+        };
 
         const albumChange = (event) => {
             let newChange = {...currentAlbum};
@@ -114,7 +121,8 @@
             <div>
                 <h4>Artist/Album Details</h4>
                 <ArtistList albums={albums} clickHandler={selectArtist} />
-                <ArtistDetail album={currentAlbum} handleChange={albumChange} saveNewAlbum={saveNewAlbum} handleReset={handleReset} />
+                <ArtistDetail album={currentAlbum} handleChange={albumChange} saveNewAlbum={saveNewAlbum} handleReset={handleReset} deleteAlbum={deleteAlbum} />
+                {showSuccessMessage && (<div className="success-message">Album deleted successfully!</div>)}
             </div>
         )
     }

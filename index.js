@@ -78,21 +78,21 @@ app.get('/albums/:artist', (req, res) => {
 
 // add a new album
 app.post('/api/addAlbum', (req, res, next) => {
-    if (req.body._id === undefined) {
-        console.log("Req body: ", ({artist:req.body.artist, albumTitle: req.body.albumTitle, songs: req.body.songs}), {upsert:true})
+    if (!req.body._id) {
+        console.log("create", req.body);
         Album.create(req.body).then(result => res.json(result)).then(result => {console.log(result.statusCode)})
         .catch(err => res.json({"error": err}));
 
     } else {
         console.log("alternate");
-        Album.updateOne({_id: req.body._id}, req.body, {upsert: true})
+        Album.findOneAndUpdate({_id: req.body._id}, {artist:req.body.artist, albumTitle: req.body.albumTitle, songs: req.body.songs})
             .then(result => res.json(result))
             .catch(err => res.json({"error": err}));
     }
 });
 
 // Update album info
-app.get('/api/add/:artist/:albumTitle/:songs',(req, res, next) => {
+app.get('/api/add/:_id/:artist/:albumTitle/:songs',(req, res, next) => {
     let artist = req.params.artist;
     console.log("rp: ", req.params);
     Album.findOneAndUpdate({ artist: artist},({artist:req.params.artist, albumTitle: req.params.albumTitle, songs: req.params.songs}), {upsert: true},(err, res) =>{
@@ -104,17 +104,12 @@ app.get('/api/add/:artist/:albumTitle/:songs',(req, res, next) => {
 
 
 // delete an album
-app.get('/albums/delete/:albumTitle', (req, res) => {
-    Album.findOneAndDelete({albumTitle: req.body.albumTitle}, req.body)
-        .then(result => {
-            if (result.deletedCount === 1) {
-                console.log("Successfully deleted");
-            } else {
-                console.log("Not deleted");
-            }
-        res.json(result);
+app.get('/api/albums/delete/:_id', (req, res) => {
+    Album.findOneAndDelete({_id: req.params._id})
+        .then((result) => {
+        res.json({"Deleted": result});
         })
-    .catch(err => res.json({"error NOT HERE": err}));
+    .catch(err => res.json({"error": err}));
 })
 
 
