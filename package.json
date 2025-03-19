@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Classwork for Javascript IT122",
   "main": "index.js",
+  "types": "dist/index",
   "type": "module",
   "scripts": {
-    "test": "Hello World"
+    "compile": "tsc -p ."
   },
   "repository": {
     "type": "git",
@@ -31,11 +32,19 @@
     "express": "^4.21.2",
     "mongoose": "^8.9.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "use-immer": "^0.11.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",
     "@babel/preset-env": "^7.26.7",
-    "@babel/preset-react": "^7.26.3"
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.26.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "eslint": "^9.21.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }
